@@ -35,8 +35,8 @@ sudo apt update && sudo apt install aircrack-ng xterm
 1. **Clone the repository** and give script execution permission:
 
 ```bash
-git clone https://github.com/your-username/wifi-deauth-blaster.git
-cd wifi-deauth-blaster
+git clone https://github.com/rff-glitch/wifi-jamming.git
+cd wifi-jamming
 chmod +x blast.sh
 ```
 
