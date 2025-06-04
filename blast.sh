@@ -66,7 +66,7 @@ echo -e "\n${GREEN}📡 Scanning for targets - watch the scan window (10 seconds
 echo -e "${YELLOW}The scan window will close automatically after 10 seconds.${RESET}"
 sleep 2
 
-# Run scan in visible xterm window
+# Run scan in  xterm window
 xterm -T "WiFi Scan" -geometry 100x30 -e "timeout 10s airodump-ng --write $scan_file --output-format csv $iface" &
 scan_pid=$!
 
@@ -145,3 +145,6 @@ done
 # Clean up animation when done
 kill $attack_pid
 cleanup
+#by raef
+
+#Sry if I mess with english words 
