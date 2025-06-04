@@ -138,7 +138,7 @@ cleanup() {
 }
 trap cleanup INT
 
-echo -e "\n${CYAN}${BOLD}⚠️  WARNING: You are about to launch a deauthentication attack!${RESET}"
+echo -e "\n${CYAN}${BOLD}⚠️  WARNING: You are about to launch the attack!${RESET}"
 read -p "Press ENTER to begin the assault or CTRL+C to cancel..."
 
 
