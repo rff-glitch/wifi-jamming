@@ -50,7 +50,7 @@ echo -e "                                                  by ${BOLD}${GREEN}RAE
 echo -e "\n"
 read -p "🔓 Press ENTER to begin scanning for nearby networks..."
 
-# -------------------- INTERFACE SELECTION --------------------
+#  INTERFACE SELECTION 
 mapfile -t interfaces < <(iw dev | awk '$1=="Interface"{print $2}')
 if [[ ${#interfaces[@]} -eq 0 ]]; then
     echo -e "${RED}[!] No wireless interfaces found.${RESET}"
@@ -146,7 +146,7 @@ cleanup() {
 }
 trap cleanup INT
 
-# -------------------- LAUNCH ATTACK --------------------
+#  LAUNCH ATTACK 
 echo -e "\n${RED}${BOLD}💣 Launching attack...${RESET}"
 attack_animation &
 attack_pid=$!
