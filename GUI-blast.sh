@@ -1,7 +1,14 @@
 #!/bin/bash
 
-zenity --info --title=" Welcome" \
-  --text="🛠️  Tool: WiFi-Jamming\n👤 Author: Raef\n\n⚠️  I'm not responsible for any missuse .\nUse responsibly."
+
+# Ensure Zenity is installed
+if ! command -v zenity &>/dev/null; then
+  echo "Zenity not found. Installing..."
+  apt update && apt install -y zenity || {
+    echo "❌ Failed to install Zenity. Exiting."
+    exit 1
+  }
+fi
 
 # Privilege Check
 if [[ $EUID -ne 0 ]]; then 
@@ -16,6 +23,11 @@ for cmd in airmon-ng airodump-ng aireplay-ng xterm iwconfig; do
     exit 1
   fi
 done
+
+zenity --info --title=" Welcome" \
+  --text="🛠️  Tool: WiFi-Jamming\n👤 Author: Raef\n\n⚠️  I'm not responsible for any missuse .\nUse responsibly."
+
+
 
 RED="\e[31m"; GREEN="\e[32m"; CYAN="\e[36m"; YELLOW="\e[33m";
 PURPLE="\e[35m"; BLUE="\e[34m"; RESET="\e[0m"; BOLD="\e[1m"
