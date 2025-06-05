@@ -4,7 +4,7 @@
 # Ensure Zenity is installed
 if ! command -v zenity &>/dev/null; then
   echo "Zenity not found. Installing..."
-  apt update && apt install -y zenity || {
+  apt update && apt install -y zenity  xterm || {
     echo "❌ Failed to install Zenity. Exiting."
     exit 1
   }
