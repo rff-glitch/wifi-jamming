@@ -15,8 +15,8 @@ fi
 # Dependencies
 
 
-apt update &>/dev/null
-apt install -y zenity xterm &>/dev/null
+apt update 
+apt install -y zenity xterm 
 for cmd in airmon-ng airodump-ng aireplay-ng xterm iwconfig; do
   if ! command -v "$cmd" &>/dev/null; then 
     zenity --error --text="❌ Missing dependency: $cmd"
