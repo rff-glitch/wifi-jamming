@@ -1,14 +1,6 @@
 #!/bin/bash
 
 
-# Ensure Zenity is installed
-if ! command -v zenity &>/dev/null; then
-  echo "Zenity not found. Installing..."
-  apt update && apt install -y zenity  xterm || {
-    echo "❌ Failed to install Zenity. Exiting."
-    exit 1
-  }
-fi
 
 # Privilege Check
 if [[ $EUID -ne 0 ]]; then 
@@ -16,7 +8,15 @@ if [[ $EUID -ne 0 ]]; then
     exit 1
 fi
 
+
+
+
+
 # Dependencies
+
+
+apt update &>/dev/null
+apt install -y zenity xterm &>/dev/null
 for cmd in airmon-ng airodump-ng aireplay-ng xterm iwconfig; do
   if ! command -v "$cmd" &>/dev/null; then 
     zenity --error --text="❌ Missing dependency: $cmd"
