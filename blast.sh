@@ -1,7 +1,5 @@
 #!/bin/bash
 
-
-
 if [[ $EUID -ne 0 ]]; then 
     echo -e "\e[31m[!] Root access is required. Run this script as root.\e[0m"
     exit 1
@@ -19,7 +17,6 @@ done
 RED="\e[31m"; GREEN="\e[32m"; CYAN="\e[36m"; YELLOW="\e[33m";
 PURPLE="\e[35m"; BLUE="\e[34m"; RESET="\e[0m"; BOLD="\e[1m"
 
-
 attack_animation() {
     local i=0
     local frames=("💥" "🔥" "⚡" "💣")
@@ -29,7 +26,6 @@ attack_animation() {
         sleep 0.3
     done
 }
-
 
 clear
 echo -e "${RED}${BOLD}"
@@ -96,7 +92,6 @@ if [[ ${#aps[@]} -eq 0 ]]; then
     exit 1
 fi
 
-
 echo -e "\n${PURPLE}${BOLD}🎯 Detected Networks:${RESET}"
 echo -e "${YELLOW}------------------------------------------------${RESET}"
 printf "${BOLD}%-20s %-4s %s${RESET}\n" "BSSID" "CH" "ESSID"
@@ -106,7 +101,6 @@ for ap in "${aps[@]}"; do
 done
 echo -e "${YELLOW}------------------------------------------------${RESET}"
 echo -e "${RED}${BOLD}Total networks found: ${#aps[@]}${RESET}"
-
 
 echo -e "\n${CYAN}${BOLD}[0] Global Attack - All Networks"
 echo -e "[1] Single Network Target${RESET}"
@@ -123,7 +117,6 @@ if [[ "$mode" == "1" ]]; then
 else
     selected=("${aps[@]}")
 fi
-
 
 cleanup() {
     echo -e "\n${YELLOW}${BOLD}⚙️  Stopping attacks and restoring interface...${RESET}"
