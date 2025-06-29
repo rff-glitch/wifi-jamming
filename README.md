@@ -1,4 +1,5 @@
-# 📡 WiFi Jamming Tool
+
+# 🚨 WiFi DEAUTH BLASTER 🔥
 
 > Automated multi-target deauthentication attack system using `aircrack-ng`  
 > **Author**: Raef (`rff-glitch`)  
@@ -17,11 +18,11 @@ You are **solely responsible** for your actions.
 
 ---
 
-## 🎯 Features
+## 🎯 Features ✨
 
-- 🔎 Auto-detects and lists wireless interfaces  
+- 📡 Auto-detects and lists wireless interfaces  
 - 📡 Switches interfaces to monitor mode  
-- 📶 Scans and displays nearby access points (APs)  
+- 🛰️ Scans and displays nearby access points (APs)  
 - 🚀 Simultaneously launches multiple `aireplay-ng` deauth attacks  
 - 💻 Dynamic terminal UX with scanning animations and `xterm` attack windows  
 - 🧠 Zenity GUI version available for ease of use
@@ -83,6 +84,14 @@ The GUI will prompt you to:
 
 ---
 
+## 📌 Notes
+
+- The script opens **multiple `xterm` windows** per target. Make sure your system supports GUI windows.
+- Automatically cleans up and restores network settings upon `CTRL+C`.
+- Logs are not stored; attacks are transient and run in memory.
+
+---
+
 ## 🧠 How It Works
 
 1. **Interface Selection** — chooses wireless card and enables monitor mode  
@@ -90,6 +99,12 @@ The GUI will prompt you to:
 3. **Attack Selection** — user selects target AP(s)  
 4. **Execution** — launches `aireplay-ng` in `xterm` windows for each target  
 5. **Cleanup** — tool stops monitor mode and resets interface on exit or interruption
+
+---
+
+## 🛑 STOPPING ATTACKS
+
+Simply press `CTRL+C` anytime during the attack phase to **terminate all sessions** and **restore your network interface** to managed mode.
 
 ---
 
@@ -109,7 +124,7 @@ The GUI will prompt you to:
 
 ---
 
-## ✅ Tested On
+## ⚙️ Tested On
 
 The tool has been tested on:
 
@@ -123,7 +138,7 @@ The tool has been tested on:
 ## 🧪 Future Improvements
 
 - ✨ Logging system for audit trails  
-- 🔐 Runtime encryption & anti-debug protections  
+- 🔐 Runtime encryption & anti-detection protections  
 - 📁 AP filtering based on MAC/vendor  
 - 🔧 Configurable delay and deauth count per target
 
@@ -154,8 +169,12 @@ To suggest a new feature or report a bug, open an issue with full details.
 
 ---
 
+> 🛡️ Use responsibly. You are solely accountable for how you use this tool.
+
 ## ⭐️ Give It a Star
 
 If this tool helped you, please consider giving the repository a ⭐ on GitHub.
 
 ---
+
+
