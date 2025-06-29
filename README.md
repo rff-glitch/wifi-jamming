@@ -1,103 +1,161 @@
+# 📡 WiFi Jamming Tool
 
-# 🚨 WiFi DEAUTH BLASTER 🔥
-
-A powerful **AP-only focused deauthentication** bash script designed for rapid wireless disruption using `aircrack-ng` tools. This script automates the scanning and blasting of all nearby WiFi networks in range using aggressive deauth attacks. ⚔️
-
-> ⚠️ **DISCLAIMER**  
-> This tool is intended **strictly for educational and authorized security testing** purposes only.  
-> Unauthorized use against networks you do not own or have permission to test is **illegal** and unethical.
+> Automated multi-target deauthentication attack system using `aircrack-ng`  
+> **Author**: Raef (`rff-glitch`)  
+> **License**: MIT  
+> **Use responsibly. For authorized testing only.**
 
 ---
 
-## ✨ Features
+## ⚠️ Legal Disclaimer
 
-- 📡 Auto-detects wireless interfaces
-- 🧠 Automatically enters monitor mode
-- 🛰️ Scans and lists visible APs
-- 💣 Launches multiple parallel deauth attacks per target
-- 🖥️ Uses `xterm` windows for live attack visuals
-- 🎬 Animated terminal output and scan countdown
+This tool is intended **strictly for educational purposes** and **authorized penetration testing**.  
+**DO NOT** use it on any network you do not own or have explicit permission to audit.
+
+Misuse may violate laws and result in severe consequences.  
+You are **solely responsible** for your actions.
+
+---
+
+## 🎯 Features
+
+- 🔎 Auto-detects and lists wireless interfaces  
+- 📡 Switches interfaces to monitor mode  
+- 📶 Scans and displays nearby access points (APs)  
+- 🚀 Simultaneously launches multiple `aireplay-ng` deauth attacks  
+- 💻 Dynamic terminal UX with scanning animations and `xterm` attack windows  
+- 🧠 Zenity GUI version available for ease of use
 
 ---
 
 ## 🧰 Requirements
 
-Make sure you're on a **Debian-based Linux** system with root access and run:
+Tested on Debian-based systems (e.g., Kali Linux, Parrot OS).
+
+Install required packages:
 
 ```bash
-sudo apt update && sudo apt install aircrack-ng xterm
+sudo apt update
+sudo apt install aircrack-ng xterm
+```
+
+Optional (for GUI version):
+
+```bash
+sudo apt install zenity
+```
+
+---
+
+## 🔧 Installation
+
+Clone the repository and make scripts executable:
+
+```bash
+git clone https://github.com/rff-glitch/wifi-jamming.git
+cd wifi-jamming
+chmod +x blast.sh GUI-blast.sh
 ```
 
 ---
 
 ## 🚀 Usage
 
-1. **Clone the repository** and give script execution permission:
-
-```bash
-git clone https://github.com/rff-glitch/wifi-jamming.git
-cd wifi-jamming
-chmod +x blast.sh
-```
-
-2. **Run the script with root privileges**:
+### ▶️ CLI Version
 
 ```bash
 sudo ./blast.sh
 ```
 
-3. Follow on-screen instructions to:
-   - Select a wireless interface
-   - Wait for scanning to finish
-   - View and confirm targets
-   - Begin full-scale deauthentication attacks ⚔️
+### 🖱️ GUI Version (Zenity)
 
----
+If you prefer graphical interaction:
 
-## 📷 Preview
-
-```
-🧠 Interface Selection
-📡 Scanning for targets...
-🎯 Displaying APs
-💣 Launching attacks in xterm
-🔥 LIVE BLASTING in progress!
+```bash
+sudo ./GUI-blast.sh
 ```
 
----
-
-## 📌 Notes
-
-- The script opens **multiple `xterm` windows** per target. Make sure your system supports GUI windows.
-- Automatically cleans up and restores network settings upon `CTRL+C`.
-- Logs are not stored; attacks are transient and run in memory.
+The GUI will prompt you to:
+- Select a wireless interface
+- Wait for AP scanning
+- Choose a target network
+- Confirm attack launch via `xterm`
 
 ---
 
-## 🛑 STOPPING ATTACKS
+## 🧠 How It Works
 
-Simply press `CTRL+C` anytime during the attack phase to **terminate all sessions** and **restore your network interface** to managed mode.
-
----
-
-## ⚙️ Tested On
-
-- ✅ Kali Linux
-- ✅ Parrot OS
-- ✅ Ubuntu with aircrack-ng installed
+1. **Interface Selection** — chooses wireless card and enables monitor mode  
+2. **Scanning** — uses `airodump-ng` to detect nearby APs  
+3. **Attack Selection** — user selects target AP(s)  
+4. **Execution** — launches `aireplay-ng` in `xterm` windows for each target  
+5. **Cleanup** — tool stops monitor mode and resets interface on exit or interruption
 
 ---
 
-## 🙋‍♂️ Author
+## 📂 File Structure
 
-Made with 💥 by **RAEF**  
-Feel free to contribute, fork, or report bugs 🐛!
+| File             | Description                                  |
+|------------------|----------------------------------------------|
+| `blast.sh`       | Terminal-based interactive attack script     |
+| `GUI-blast.sh`   | Zenity GUI-based interface                   |
+| `LICENSE`        | MIT License                                  |
 
 ---
 
-## 🧨 License
+## 📸 Screenshots
 
-This project is released under the [MIT License](LICENSE).
+> *(Add screenshots or gifs showing AP selection and `xterm` blast windows)*
 
-> 🛡️ Use responsibly. You are solely accountable for how you use this tool.
+---
 
+## ✅ Tested On
+
+The tool has been tested on:
+
+- ✅ Kali Linux 2023.x (rolling)
+- ✅ Parrot OS 6.x
+- ✅ Ubuntu 22.04 LTS with `aircrack-ng` installed manually
+- ✅ Custom Refracta-based distros
+
+---
+
+## 🧪 Future Improvements
+
+- ✨ Logging system for audit trails  
+- 🔐 Runtime encryption & anti-debug protections  
+- 📁 AP filtering based on MAC/vendor  
+- 🔧 Configurable delay and deauth count per target
+
+---
+
+## 👤 Author
+
+**Raef** — aka `rff-glitch`  
+🛠 Cybersecurity Enthusiast • Linux Power User • Scripting Addict
+
+GitHub Profile: [github.com/rff-glitch](https://github.com/rff-glitch)
+
+Contact for collaboration or bug reports through GitHub issues.
+
+---
+
+## 📄 License
+
+This project is licensed under the [MIT License](LICENSE).  
+Use it responsibly. Abuse leads to legal consequences.
+
+---
+
+## 🤝 Contributing
+
+Pull requests are welcome.  
+To suggest a new feature or report a bug, open an issue with full details.
+
+---
+
+## ⭐️ Give It a Star
+
+If this tool helped you, please consider giving the repository a ⭐ on GitHub.
+
+---
