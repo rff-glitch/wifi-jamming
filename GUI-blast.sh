@@ -101,3 +101,4 @@ for ap in "${selected[@]}"; do
   break
 done
 #by raef
+#rff-glitch
