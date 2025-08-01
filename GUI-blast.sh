@@ -13,6 +13,9 @@ for cmd in airmon-ng airodump-ng aireplay-ng xterm iwconfig; do
     exit 1
   fi
 done
+
+sudo cp ./GUI-blast.sh /usr/bin/GUI-blast
+
 zenity --info --title=" Welcome" \
   --text="🛠️  Tool: WiFi-Jamming\n👤 Author: Raef\n\n⚠️  I'm not responsible for any missuse .\nUse responsibly."
 RED="\e[31m"; GREEN="\e[32m"; CYAN="\e[36m"; YELLOW="\e[33m";

